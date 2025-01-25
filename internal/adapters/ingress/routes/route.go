@@ -29,5 +29,8 @@ func (taskRouter *TaskTrackerRouter) setupTaskTrackerHandler(api tasktrackerigre
 	router := taskRouter.router.Group(constants.TaskTrackerGroup)
 	{
 		router.POST(constants.TaskTrackerEndpoint, handler.Create)
+		router.GET(constants.TaskTrackerEndpoint, handler.FetchAll)
+		router.PATCH(constants.TaskTrackerEndpoint, handler.Update)
+		router.DELETE(constants.TaskTrackerEndpoint, handler.Delete)
 	}
 }
