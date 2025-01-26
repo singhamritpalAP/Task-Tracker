@@ -167,7 +167,8 @@ http://localhost:8080
 
 The following features are planned for future development:
 
-1. **Store Hashed Passwords:** Implement password hashing to securely store user passwords in the database.
+1. **Add Unit Tests:** For faster development and testing.
+2. **Store Hashed Passwords:** Implement password hashing to securely store user passwords in the database.
 2. **Validate Username and Password:** Enhance user validation logic to ensure usernames are unique and passwords meet security standards.
 3. **Create Dockerfile and Compose:** Develop a Dockerfile and Docker Compose configuration for containerized deployment of the application.
 4. **User-Specific Tasks:** Implement functionality so that users can only perform CRUD operations on tasks they created.
