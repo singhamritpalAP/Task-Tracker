@@ -11,6 +11,7 @@ The application allows users to create, update, delete, and fetch all tasks.
 - [Running Locally](#running-locally)
 - [API Documentation](#api-documentation)
 - [Future Scope](#future-scope)
+- [Useful Commands](#useful-commands)
 
 ## Features
 
@@ -173,3 +174,18 @@ The following features are planned for future development:
 5. **Set Database Column Length:** Define appropriate lengths for database columns to enforce data integrity.
 6. **Fetch Configs from Config Map:** Integrate configuration management to fetch settings from a config map for better environment handling.
 7. **Add Validation for User Input:** Implement input validation for user details during creation and authentication processes.
+
+## Useful Commands
+
+1. **Install postgress:** sudo apt-get install postgresql postgresql-contrib
+2. **Start postgres:** sudo systemctl start postgresql
+3. **Stop postgres:** sudo systemctl stop postgresql
+4. **Check status:** systemctl status 'postgresql*'
+5. **Check postgres logs:** sudo tail -n 50 /var/log/postgresql/postgresql-14-main.log
+6. **Restart postgres:** sudo systemctl restart postgresql
+7. **Exec using postgres user:** sudo -u postgres psql
+8. **Create database:** CREATE DATABASE your_database;
+9. **Create a new user:** CREATE USER your_username WITH PASSWORD 'your_password';
+10. **Grant Privileges:** GRANT ALL PRIVILEGES ON DATABASE your_database TO your_username;
+11. **Exit psql:** \q
+12. **Exec in DB with created user:** psql -U <username> -d <db-name> -h localhost
