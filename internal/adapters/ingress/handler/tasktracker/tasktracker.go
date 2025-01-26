@@ -5,20 +5,28 @@ import (
 	"log"
 	"net/http"
 	"taskTracker/constants"
+	"taskTracker/internal/adapters/ingress/handler"
 	models "taskTracker/internal/models/tasktracker/tracker"
 	"taskTracker/internal/ports/tasktrackerigress"
 )
 
-type TaskTracker struct {
+type Handler struct {
+	handler.Interfaces
 	api tasktrackerigress.TaskTrackerAPIPort
 }
 
-func NewHandler(api tasktrackerigress.TaskTrackerAPIPort) *TaskTracker {
-	return &TaskTracker{
+func NewHandler(api tasktrackerigress.TaskTrackerAPIPort) IHandler {
+	return &Handler{
 		api: api,
 	}
 }
-func (taskTracker *TaskTracker) Create(ctx *gin.Context) {
+
+type IHandler interface {
+	handler.Interfaces
+}
+
+// Create for handling request to create task
+func (handler *Handler) Create(ctx *gin.Context) {
 	log.Println("Received request for create task")
 	var taskRequest models.TaskTracker
 
@@ -38,7 +46,7 @@ func (taskTracker *TaskTracker) Create(ctx *gin.Context) {
 		return
 	}
 
-	err = taskTracker.api.GetTaskAPIPort().CreateTask(taskRequest)
+	err = handler.api.GetTaskAPIPort().CreateTask(taskRequest)
 	if err != nil {
 		log.Println("error while creating task: " + err.Error())
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -49,9 +57,11 @@ func (taskTracker *TaskTracker) Create(ctx *gin.Context) {
 	return
 }
 
-func (taskTracker *TaskTracker) FetchAll(ctx *gin.Context) {
+// FetchAll to fetch all created tasks for now fetches all tasks in DB.
+// can be modified to fetch tasks of logged-in user
+func (handler *Handler) FetchAll(ctx *gin.Context) {
 	log.Println("Received request for fetch all tasks")
-	allTasks, err := taskTracker.api.GetTaskAPIPort().FetchAllTasks()
+	allTasks, err := handler.api.GetTaskAPIPort().FetchAllTasks()
 	if err != nil {
 		log.Println("error while fetching all tasks: " + err.Error())
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -65,9 +75,11 @@ func (taskTracker *TaskTracker) FetchAll(ctx *gin.Context) {
 	return
 }
 
-func (taskTracker *TaskTracker) Update(ctx *gin.Context) {
+// Update to update a specific task.
+// can be modified to allow a user to update tasks only created by them
+func (handler *Handler) Update(ctx *gin.Context) {
 	log.Println("Received request for update task")
-	var taskUpdateRequest models.TaskUpdate
+	var taskUpdateRequest map[string]interface{}
 	// fetching update request
 	err := ctx.ShouldBindJSON(&taskUpdateRequest)
 	if err != nil {
@@ -76,15 +88,16 @@ func (taskTracker *TaskTracker) Update(ctx *gin.Context) {
 		return
 	}
 
-	// validating payload
-	err = taskUpdateRequest.Validate()
-	if err != nil {
-		log.Println(constants.ErrWhileValidating + err.Error())
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
+	// todo validating payload
+	//err = taskUpdateRequest.Validate()
+	//if err != nil {
+	//	log.Println(constants.ErrWhileValidating + err.Error())
+	//	ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	//	return
+	//}
 
-	err = taskTracker.api.GetTaskAPIPort().UpdateTask(taskUpdateRequest)
+	// passing only updated fields for update
+	err = handler.api.GetTaskAPIPort().UpdateTask(taskUpdateRequest)
 	if err != nil {
 		log.Println("error while updating task: " + err.Error())
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -94,15 +107,18 @@ func (taskTracker *TaskTracker) Update(ctx *gin.Context) {
 	return
 }
 
-func (taskTracker *TaskTracker) Delete(ctx *gin.Context) {
+// Delete for deleting a specific task
+// can be modified to allow deletion of task created by logged-in user
+func (handler *Handler) Delete(ctx *gin.Context) {
 	log.Println("Received request for delete task")
-	taskId := ctx.Query("taskId")
+	// fetching task id from passed params
+	taskId := ctx.Query(constants.TaskIdParam)
 	if len(taskId) == 0 {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": constants.ErrTaskIdRequired.Error()})
 		return
 	}
 
-	err := taskTracker.api.GetTaskAPIPort().DeleteTask(taskId)
+	err := handler.api.GetTaskAPIPort().DeleteTask(taskId)
 	if err != nil {
 		log.Println("error while deleting task: " + err.Error())
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

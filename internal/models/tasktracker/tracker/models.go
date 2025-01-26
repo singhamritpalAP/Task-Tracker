@@ -2,7 +2,6 @@ package models
 
 import (
 	"taskTracker/constants"
-	"time"
 )
 
 // TaskStatus a custom type for Task Status
@@ -17,22 +16,30 @@ const (
 
 // TaskTracker represents a task with its details.
 type TaskTracker struct {
-	TaskId      string     `json:"taskId"`
+	TaskId      string     `json:"task_id"`
 	Title       string     `json:"title"`
 	Description string     `json:"description"`
 	Status      TaskStatus `json:"status"`
-	StartDate   time.Time  `json:"start_date"`
-	EndDate     time.Time  `json:"end_date"`
+	//StartDate   time.Time  `json:"start_date"`
+	//EndDate     time.Time  `json:"end_date"`
 }
 
 // TaskUpdate represents the fields that can be updated for a task.
 type TaskUpdate struct {
-	TaskId      string     `json:"taskId"`
+	TaskId      string     `json:"task_id"`
 	Title       string     `json:"title,omitempty"`
 	Description string     `json:"description,omitempty"`
 	Status      TaskStatus `json:"status,omitempty"`
 }
 
+// User represents the fields for user todo add validation
+type User struct {
+	ID       uint   `json:"id"`
+	Username string `json:"username"`
+	Password string `json:"password"` // Store hashed passwords
+}
+
+// Validate to validate received payload
 func (task *TaskTracker) Validate() error {
 	if task.TaskId == "" {
 		return constants.ErrTaskIdRequired
@@ -46,12 +53,12 @@ func (task *TaskTracker) Validate() error {
 	if !isValidStatus(task.Status) {
 		return constants.ErrInvalidStatus
 	}
-	if task.StartDate.IsZero() {
-		return constants.ErrStartDateRequired
-	}
-	if task.EndDate.Before(task.StartDate) {
-		return constants.ErrEndDateRequired
-	}
+	//if task.StartDate.IsZero() {
+	//	return constants.ErrStartDateRequired
+	//}
+	//if task.EndDate.Before(task.StartDate) {
+	//	return constants.ErrEndDateRequired
+	//}
 
 	return nil
 }

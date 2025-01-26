@@ -7,4 +7,5 @@ type Interfaces interface {
 	FetchAll(ctx *gin.Context)
 	Update(ctx *gin.Context)
 	Delete(ctx *gin.Context)
+	Login(ctx *gin.Context)
 }

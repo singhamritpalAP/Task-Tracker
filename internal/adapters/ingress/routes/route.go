@@ -4,6 +4,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"taskTracker/constants"
 	"taskTracker/internal/adapters/ingress/handler/tasktracker"
+	"taskTracker/internal/adapters/ingress/handler/user"
+	"taskTracker/internal/adapters/ingress/middleware"
 	"taskTracker/internal/ports/tasktrackerigress"
 )
 
@@ -21,6 +23,7 @@ func NewTaskTrackerRouter() *TaskTrackerRouter {
 
 func (taskRouter *TaskTrackerRouter) SetTaskTrackerRoutes(api tasktrackerigress.TaskTrackerAPIPort) *gin.Engine {
 	taskRouter.setupTaskTrackerHandler(api)
+	taskRouter.setupUserHandler(api)
 	return taskRouter.router
 }
 
@@ -28,9 +31,18 @@ func (taskRouter *TaskTrackerRouter) setupTaskTrackerHandler(api tasktrackerigre
 	handler := tasktracker.NewHandler(api)
 	router := taskRouter.router.Group(constants.TaskTrackerGroup)
 	{
-		router.POST(constants.TaskTrackerEndpoint, handler.Create)
-		router.GET(constants.TaskTrackerEndpoint, handler.FetchAll)
-		router.PATCH(constants.TaskTrackerEndpoint, handler.Update)
-		router.DELETE(constants.TaskTrackerEndpoint, handler.Delete)
+		router.POST(constants.TaskTrackerEndpoint, middleware.AuthMiddleware(), handler.Create)
+		router.GET(constants.TaskTrackerEndpoint, middleware.AuthMiddleware(), handler.FetchAll)
+		router.PATCH(constants.TaskTrackerEndpoint, middleware.AuthMiddleware(), handler.Update)
+		router.DELETE(constants.TaskTrackerEndpoint, middleware.AuthMiddleware(), handler.Delete)
+	}
+}
+
+func (taskRouter *TaskTrackerRouter) setupUserHandler(api tasktrackerigress.TaskTrackerAPIPort) {
+	handler := user.NewHandler(api)
+	router := taskRouter.router.Group(constants.TaskTrackerGroup)
+	{
+		router.POST(constants.UserEndpoint, handler.Create)
+		router.POST(constants.LoginEndpoint, handler.Login)
 	}
 }
