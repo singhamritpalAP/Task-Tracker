@@ -7,7 +7,7 @@ import (
 
 func ConvertTaskToDao(task models.TaskTracker) dao.TaskTracker {
 	return dao.TaskTracker{
-		TaskId:      task.TaskId,
+		// TaskId:      task.TaskId,
 		Title:       task.Title,
 		Description: task.Description,
 		Status:      string(task.Status),

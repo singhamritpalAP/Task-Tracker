@@ -4,7 +4,7 @@ import "time"
 
 // TaskTracker represents task model for DB table todo set column limits(use varchar with size)
 type TaskTracker struct {
-	TaskId      string `gorm:"primaryKey"`
+	TaskId      uint   `gorm:"primaryKey"`
 	Title       string `gorm:"not null"`
 	Description string
 	Status      string    `gorm:"default:'PENDING'"`

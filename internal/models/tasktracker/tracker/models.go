@@ -16,7 +16,7 @@ const (
 
 // TaskTracker represents a task with its details.
 type TaskTracker struct {
-	TaskId      string     `json:"task_id"`
+	// TaskId      string     `json:"task_id"`
 	Title       string     `json:"title"`
 	Description string     `json:"description"`
 	Status      TaskStatus `json:"status"`
@@ -41,9 +41,9 @@ type User struct {
 
 // Validate to validate received payload
 func (task *TaskTracker) Validate() error {
-	if task.TaskId == "" {
-		return constants.ErrTaskIdRequired
-	}
+	//if task.TaskId == "" {
+	//	return constants.ErrTaskIdRequired
+	//}
 	if len(task.Title) < 2 {
 		return constants.ErrTitleRequired
 	}

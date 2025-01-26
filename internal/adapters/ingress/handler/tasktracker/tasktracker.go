@@ -67,8 +67,9 @@ func (handler *Handler) FetchAll(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+	// in case there are no tasks
 	if len(allTasks) == 0 {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "no tasks found"})
+		ctx.JSON(http.StatusNoContent, gin.H{})
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{"tasks": allTasks})
