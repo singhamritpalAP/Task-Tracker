@@ -7,6 +7,7 @@ import (
 	"taskTracker/constants"
 	"taskTracker/internal/adapters/ingress/handler"
 	models "taskTracker/internal/models/tasktracker/tracker"
+	"taskTracker/internal/models/utils"
 	"taskTracker/internal/ports/tasktrackerigress"
 )
 
@@ -89,6 +90,12 @@ func (handler *Handler) Update(ctx *gin.Context) {
 		return
 	}
 
+	// Validate the status field
+	if err := handler.validateStatus(taskUpdateRequest); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
 	// todo validating payload
 	//err = taskUpdateRequest.Validate()
 	//if err != nil {
@@ -127,4 +134,20 @@ func (handler *Handler) Delete(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, gin.H{"message": "task deleted successfully"})
 	return
+}
+
+// validateStatus checks if the status field is present and valid in the request.
+func (handler *Handler) validateStatus(taskUpdateRequest map[string]interface{}) error {
+	status, exists := taskUpdateRequest[constants.Status]
+	if !exists {
+		return nil // case when status is not updated
+	}
+
+	// checking if status is string
+	statusStr, ok := status.(string)
+	if !ok {
+		return constants.ErrInvalidStatus
+	}
+
+	return utils.IsValidStatus(statusStr)
 }

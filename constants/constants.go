@@ -42,4 +42,5 @@ const (
 // General
 const (
 	TaskId = "task_id"
+	Status = "status"
 )
