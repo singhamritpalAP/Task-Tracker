@@ -45,6 +45,7 @@ func (server *Server) start() {
 
 func (server *Server) Run() {
 	server.start()
+	// todo need to handle graceful shutdown
 }
 
 func (server *HttpServer) Start() {
